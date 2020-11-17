@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Task List</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+        <h1>Tasks List</h1>
+            <fieldset id="#field">
+                <input id="newTask" placeholder="task name" type="text" name="task" tabindex="1">
+                <ul id="list"></ul>
+            </fieldset>
+            <button id="submitButton" style="margin-top: 5px;">Submit</button>
+        <br/>
+        <script>
+            
+            let submit = document.getElementById('submitButton');
+            submit.addEventListener('click', function(event) {
+                event.preventDefault();
+                let ul = $('#list');
+                let taskToBeCreated = $('#newTask');
+                const data = JSON.stringify({
+                    task: taskToBeCreated.val()
+                });
+
+                $.ajax({
+                    async: true,
+                    crossDomain: true,
+                    contentType: 'application/json; charet=utf-8',
+                    processData: false,
+                    method: "POST",
+                    url: "http://localhost/backend-api/router.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(data) {
+                        alert(data.message);
+                        let li = document.createElement("li");
+                        li.setAttribute('id', 'taskItem_'+data.message);
+                        li.appendChild(document.createTextNode(data.message));
+                        let deleteButton = document.createElement("button");
+                        deleteButton.setAttribute('id', 'task_'+ data.message);
+                        deleteButton.setAttribute('onclick','deleteTask();'); // for FF
+                        deleteButton.onclick = function() { deleteTask(data.message); }; // for IE
+                        deleteButton.innerText = "Delete";
+
+                        let updateButton = document.createElement("button");
+                        updateButton.setAttribute('id', 'task_'+ data.message);
+                        updateButton.setAttribute('onclick','updateTask();'); // for FF
+                        updateButton.onclick = function() { updateTask(data.message); }; // for IE
+                        updateButton.innerText = "Update";
+
+                        li.append(deleteButton);
+                        li.append(updateButton);
+                        ul.append(li);  
+                    },
+                    failure: function(error) {
+                        alert("this is an error" + error);
+                    }
+                });
+            });
+           
+            function getTask() {
+               
+                $.ajax({
+                    method: "GET",
+                    url: "http://localhost/backend-api/router.php",
+                    success: function(data) {
+                      alert(data);
+
+                    },
+                    failure: function(error) {
+                        alert("This is an error: " + error);
+                    }
+                });
+            }
+
+            function updateTask(task) {
+                let newTask = prompt('Insert new task');
+                const data = JSON.stringify({
+                    oldTask: task,
+                    newTask: newTask
+                });
+                $.ajax({
+                    async: true,
+                    crossDomain: true,
+                    contentType: 'application/json; charet=utf-8',
+                    data: data,
+                    processData: false,
+                    method: "PUT",
+                    url: "http://localhost/backend-api/router.php",
+                    success: function(data) {
+                        let itemToBeUpdated = document.getElementById('taskItem_' + task);
+                        textNode = itemToBeUpdated.childNodes[0];
+                        textNode.nodeValue = newTask;
+                    },
+                    failure: function(error) {
+                        alert("This is an error: " + error);
+                    }
+                });
+            }
+
+            function deleteTask(task) {
+                const data = JSON.stringify({
+                    task: task
+                });
+                $.ajax({
+                    async: true,
+                    crossDomain: true,
+                    contentType: 'application/json; charet=utf-8',
+                    data: data,
+                    processData: false,
+                    method: "DELETE",
+                    url: "http://localhost/backend-api/router.php",
+                    success: function(data) {
+                        alert(data);
+                        let itemToBeRemoved = document.getElementById('taskItem_' + task);
+                        itemToBeRemoved.parentNode.removeChild(itemToBeRemoved);
+                    },
+                    failure: function(error) {
+                        alert("This is an error: " + error);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

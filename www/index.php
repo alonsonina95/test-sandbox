@@ -11,7 +11,7 @@
             <div class="hero-body">
                 <div class="container has-text-centered">
                     <h1 class="title">
-                        MEND TEST LAMP STACK
+                        LAMP STACK
                     </h1>
                     <h2 class="subtitle">
                         Your local development environment
@@ -53,6 +53,7 @@
                         <div class="content">
                             <ul>
                                 <li><a href="http://localhost/phpinfo.php">phpinfo()</a></li>
+                                <li><a href="http://localhost:8080">phpMyAdmin</a></li>
                                 <li><a href="http://localhost/test_db.php">Test DB Connection</a></li>
                             </ul>
                         </div>
